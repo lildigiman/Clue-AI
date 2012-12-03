@@ -24,7 +24,7 @@ nextPlayer(plum, mustard).
 nextPlayer(mustard, peacock).
 nextPlayer(peacock, scarlet).
 nextPlayer(scarlet, white).
-%specially assert envelope doesn't have a card
+%specially assert envelope does not have a card
 
 /*
 nextPlayer(Begin, End) :-
@@ -46,7 +46,7 @@ me(mustard).
 /*hand(Player, Status, Card) :-
 	player(Player),
 	card(_, Card).
-	FIXME: I removed this to fix observe function... Make sure this doesn't
+	FIXME: I removed this to fix observe function... Make sure this does not
 		effect anything else!
 */
 % card(Type, Description)

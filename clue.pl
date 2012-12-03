@@ -21,7 +21,7 @@ observe(Asker, Card1, Card2, Card3, Responder) :-
 	forall(playersBetween(Asker, Responder, X), 	
 		(setHand(X, hasnot, Card1), setHand(X, hasnot, Card2), setHand(X, hasnot, Card3))),
 	%The Responder possibly has one of the three cards:
-	%On the other hand, if ANY player has the card, we know he doesn't
+	%On the other hand, if ANY player has the card, we know he does not
 	((hand(Responder, has, Card1) ; hand(Responder, hasnot, Card1))
 		-> write('Responder has card') %TODO: Make this a null operator after debug
 		; setHand(Responder, maybe, Card1)
@@ -72,7 +72,7 @@ isBetween(Player, Begin, End) :-
  */
 playersBetween(Begin, End, Player) :-
 	player(Player),
-	Player \== envelope, %Ignore the envelope because it doesn't take a turn
+	Player \== envelope, %Ignore the envelope because it does not take a turn
 	isBetween(Player, Begin, End).
 /*
  * Returns the number of players between Begin player and End player
