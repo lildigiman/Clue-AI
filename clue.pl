@@ -1,4 +1,4 @@
-:- dynamic(hand/3).
+% :- dynamic(hand/3).
 
 % has(Player, Status, Card).
 
@@ -9,11 +9,19 @@ hasnot
 maybe
 */
 
-%hear(Asker, Card1, Card2, Card3, Responder) :-
+
+observe(Asker, Card1, Card2, Card3, Responder) :-
+	forall(playersBetween(Asker, Responder, X), 	
+		(setHand(X, hasnot, Card1), setHand(X, hasnot, Card2), setHand(X, hasnot, Card3))),
+	%The Responder possibly has one of the three cards:
+	%On the other hand, if ANY player has the card, we know he doesn't
+	((hand(Responder, has, Card1) ; hand(Responder, hasnot, Card1))
+		-> write('Responder has card') %TODO: Make this a null operator after debug
+		; setHand(Responder, maybe, Card1)
+	).
 
 
-%No one answers here
-%hear(Asker, Card1, Card2, Card3) :-
+% observe(Asker, Card1, Card2, Card3) :-
 	
 
 infer(Player, Card) :-
@@ -22,52 +30,32 @@ infer(Player, Card) :-
 
 %When a player shows you a card
 see(Presenter, Card1, Card2, Card3, CardShown) :-
-	forall(between(me(Me), Presenter, X), 
-		asserta(hand(X, hasnot, Card1)),
-		asserta(hand(X, hasnot, Card2)),
-		asserta(hand(X, hasnot, Card3))),
+	me(Me),
+	forall(playersBetween(Me, Presenter, X), 	
+		(setHand(X, hasnot, Card1), setHand(X, hasnot, Card2), setHand(X, hasnot, Card3))),
 	forall(player(X), asserta(hand(X, hasnot, CardShown))),
 	asserta(hand(Presenter, has, CardShown)).
 	
-
+/*
 between(Beginer, Presenter, X) :-
 	nextPlayer(Beginer, Y),
 	Y \== Presenter ->
 		between(Y, Presenter, X). 
-
-forall(Condition, Action) :-
-    \+ (call(Condition), \+ call(Action)).
+*/
 
 isBetween(Player, Begin, End) :-
 	numPlayersBetween(Begin, End, Y),
 	numPlayersBetween(Begin, Player, Z),
-	write(Z),
-	write('\n'),
-	write(Y),
-	write('\n'),
-	Z < Y.
+	Z < Y,
+	Begin \== Player.
 
 playersBetween(Begin, End, Player) :-
 	player(Player),
+	Player \== envelope,
 	isBetween(Player, Begin, End).
 
 numPlayersBetween(Begining, End, X) :-
-        numPlayersBetween(Begining, End, X, 0).
- 
-numPlayersBetween(Begining, End, X, Count) :-
-        (Begining == End ->
-                X is (Count - 1);
-        nextPlayer(Begining, Y),
-        numPlayersBetween(Y, End, X, Count + 1)).
-
-
-
-
-
-
-
-
-	
+		numPlayersBetween(Begining, End, X, 0).
 
 % engine
 ask(Person, Weapon) :-

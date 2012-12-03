@@ -32,17 +32,19 @@ me(mustard).
 
 %you have to be a player to have a hand
 :- dynamic(hand/3).
-hand(Player, Status, Card) :-
+/*hand(Player, Status, Card) :-
 	player(Player),
 	card(_, Card).
-
+	FIXME: I removed this to fix observe function... Make sure this doesn't
+		effect anything else!
+*/
 % card(Type, Description)
-card(person, green).
-card(person, plum).
-card(person, mustard).
-card(person, peacock).
-card(person, scarlet).
-card(person, white).
+card(suspect, green).
+card(suspect, plum).
+card(suspect, mustard).
+card(suspect, peacock).
+card(suspect, scarlet).
+card(suspect, white).
 
 card(weapon, candlestick).
 card(weapon, knife).
