@@ -1,16 +1,23 @@
-% :- dynamic(hand/3).
-
-% has(Player, Status, Card).
+/*
+ * clue.pl
+ *
+ */
 
 /*
-STATUS:
-has
-hasnot
-maybe
-*/
+ * STATUSES of hands:
+ * has
+ * hasnot
+ * maybe
+ *
+ * IMPORTANT NOTE: Player and Suspect are two seperate entities. Player
+ * 		represents the players of the game while suspects are the cards
+ */
 
-
+/*
+ * Responder responds to Asker with a card
+ */
 observe(Asker, Card1, Card2, Card3, Responder) :-
+	storeQuestion(Asker, Card1, Card2, Card3, Responder),
 	forall(playersBetween(Asker, Responder, X), 	
 		(setHand(X, hasnot, Card1), setHand(X, hasnot, Card2), setHand(X, hasnot, Card3))),
 	%The Responder possibly has one of the three cards:
@@ -18,55 +25,79 @@ observe(Asker, Card1, Card2, Card3, Responder) :-
 	((hand(Responder, has, Card1) ; hand(Responder, hasnot, Card1))
 		-> write('Responder has card') %TODO: Make this a null operator after debug
 		; setHand(Responder, maybe, Card1)
+	),
+	((hand(Responder, has, Card2) ; hand(Responder, hasnot, Card2))
+		-> write('Responder has card') %TODO: Make this a null operator after debug
+		; setHand(Responder, maybe, Card2)
+	),
+	((hand(Responder, has, Card3) ; hand(Responder, hasnot, Card3))
+		-> write('Responder has card') %TODO: Make this a null operator after debug
+		; setHand(Responder, maybe, Card3)
 	).
-
-
-% observe(Asker, Card1, Card2, Card3) :-
+/*
+ * When no one responds
+ */
+observe(Asker, Card1, Card2, Card3) :-
+	storeQuestion(Asker, Card1, Card2, Card3, none),
+	%Everyone but the Asker may have the card
+	forall((player(X), X \== Asker),
+		(setHand(X, hasnot, Card1), setHand(X, hasnot, Card2), setHand(X, hasnot, Card3))).
 	
-
+/*
+ * Deprecated Function. Delete me at some point?
+ */
 infer(Player, Card) :-
 	asserta(Player, maybe, Card).
 
-
-%When a player shows you a card
-see(Presenter, Card1, Card2, Card3, CardShown) :-
+/*
+ * When Responder responds to the AI with a CardShown
+ */
+see(Responder, Card1, Card2, Card3, CardShown) :-
 	me(Me),
-	forall(playersBetween(Me, Presenter, X), 	
+	forall(playersBetween(Me, Responder, X), 	
 		(setHand(X, hasnot, Card1), setHand(X, hasnot, Card2), setHand(X, hasnot, Card3))),
 	forall(player(X), asserta(hand(X, hasnot, CardShown))),
-	asserta(hand(Presenter, has, CardShown)).
-	
-/*
-between(Beginer, Presenter, X) :-
-	nextPlayer(Beginer, Y),
-	Y \== Presenter ->
-		between(Y, Presenter, X). 
-*/
+	setHand(Responder, has, CardShown).
 
+/*
+ * See if Player is between the Begin player and End Player
+ */
 isBetween(Player, Begin, End) :-
 	numPlayersBetween(Begin, End, Y),
 	numPlayersBetween(Begin, Player, Z),
 	Z < Y,
 	Begin \== Player.
-
+/*
+ * List of all Players between Begin player and End player
+ */
 playersBetween(Begin, End, Player) :-
 	player(Player),
-	Player \== envelope,
+	Player \== envelope, %Ignore the envelope because it doesn't take a turn
 	isBetween(Player, Begin, End).
+/*
+ * Returns the number of players between Begin player and End player
+ */
+numPlayersBetween(Begin, End, NumBetween) :-
+		numPlayersBetween(Begin, End, NumBetween, 0).
 
-numPlayersBetween(Begining, End, X) :-
-		numPlayersBetween(Begining, End, X, 0).
-
-% engine
-ask(Person, Weapon) :-
-	suspect(Person, player),
-	suspect(Weapon, weapon).
-
+/*
+ * The optimal room the AI would like to go to
+ */
 go_to(Room) :-
 	suspect(Room, room).
 
+/*
+ * What the AI should ask after the AI enters a room
+ */
+ask(Suspect, Weapon) :-
+	suspect(Suspect, suspect),
+	suspect(Weapon, weapon).
 
-suspect(Card, Type) :-
-	card(Type, Card),
-	\+ has(_, card(Type, Card)),
-	\+ may_have(_, card(Type, Card)).
+/*
+ * This is an attempt to grab a player or card (or both?) to ask questions
+ */
+suspect(Suspect, Type) :-
+	card(Type, Item),
+	card(player, Suspect),
+	\+ hand(Suspect, has, Item),
+	\+ hand(Suspect, hasnot, Item).

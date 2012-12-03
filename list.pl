@@ -1,4 +1,15 @@
-% Players(name)
+/*
+ * list.pl
+ *
+ */
+
+
+/*
+ * IMPORTANT NOTE: Player and Suspect are two seperate entities. Player
+ * 		represents the players of the game while suspects are the cards
+ *
+ * Players(name)
+ */
 player(green).
 player(plum).
 player(mustard).
@@ -62,3 +73,9 @@ card(room, study).
 card(room, ballcard).
 card(room, dining).
 card(room, billiard).
+
+/*
+ * Questions
+ * question(Asker, Card1, Card2, Card3, Responder).
+ */
+:- dynamic(question/5).

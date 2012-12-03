@@ -3,8 +3,20 @@ Clue-AI
 ################################################################################
 An implementation of a Game of Clue Artificial Intelligence system
 
-Nothing to look at yet...
+This is purely the AI engine of the game, not THE game. A user will have to
+maintain input to the AI and essentially play for the AI as a proxy.
 
 Compile with:
 
 	['clue.pl', 'list.pl', 'internal.pl'].
+
+
+################################################################################
+TODO:
+
+	AI Improvements beyond the scope of this project
+
+	GUI or Better CLI: Interface with Prolog with C, PHP, or Java. PHP would
+		provide for a good Web-Based AI
+
+################################################################################
