@@ -15,9 +15,22 @@
 
 /*
  * Responder responds to Asker with a card
+ * Always abide by the following structure:
+ * Card1:	suspect
+ * Card2:	weapon
+ * Card3:	room
+ * ^ Maybe just make the names of the vars suspect, weapon, room?
  */
 observe(Asker, Card1, Card2, Card3, Responder) :-
 	storeQuestion(Asker, Card1, Card2, Card3, Responder),
+	((Responder == none)
+		-> noResponse(Asker, Card1, Card2, Card3)
+		; responseTo(Asker, Card1, Card2, Card3, Responder)).
+
+/*
+ * When someone responds to another player question
+ */
+responseTo(Asker, Card1, Card2, Card3, Responder) :-
 	forall(playersBetween(Asker, Responder, X), 	
 		(setHand(X, hasnot, Card1), setHand(X, hasnot, Card2), setHand(X, hasnot, Card3))),
 	%The Responder possibly has one of the three cards:
@@ -34,11 +47,11 @@ observe(Asker, Card1, Card2, Card3, Responder) :-
 		-> write('Responder has card') %TODO: Make this a null operator after debug
 		; setHand(Responder, maybe, Card3)
 	).
+
 /*
  * When no one responds
  */
-observe(Asker, Card1, Card2, Card3) :-
-	storeQuestion(Asker, Card1, Card2, Card3, none),
+noResponse(Asker, Card1, Card2, Card3) :-
 	%Everyone but the Asker may have the card
 	forall((player(X), X \== Asker),
 		(setHand(X, hasnot, Card1), setHand(X, hasnot, Card2), setHand(X, hasnot, Card3))).
@@ -67,6 +80,7 @@ isBetween(Player, Begin, End) :-
 	numPlayersBetween(Begin, Player, Z),
 	Z < Y,
 	Begin \== Player.
+
 /*
  * List of all Players between Begin player and End player
  */
@@ -74,6 +88,7 @@ playersBetween(Begin, End, Player) :-
 	player(Player),
 	Player \== envelope, %Ignore the envelope because it does not take a turn
 	isBetween(Player, Begin, End).
+
 /*
  * Returns the number of players between Begin player and End player
  */
@@ -89,7 +104,7 @@ go_to(Room) :-
 /*
  * What the AI should ask after the AI enters a room
  */
-ask(Suspect, Weapon) :-
+ai_suspects(Suspect, Weapon) :-
 	suspect(Suspect, suspect),
 	suspect(Weapon, weapon).
 
@@ -98,6 +113,6 @@ ask(Suspect, Weapon) :-
  */
 suspect(Suspect, Type) :-
 	card(Type, Item),
-	card(player, Suspect),
+	card(suspect, Suspect),
 	\+ hand(Suspect, has, Item),
 	\+ hand(Suspect, hasnot, Item).

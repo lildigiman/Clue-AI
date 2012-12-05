@@ -8,7 +8,11 @@ maintain input to the AI and essentially play for the AI as a proxy.
 
 Compile with:
 
-	['clue.pl', 'list.pl', 'internal.pl'].
+	['clue.pl', 'list.pl', 'internal.pl', 'dynamic.pl', 'clue_cli.pl'].
+
+How To use:
+
+	Type 'run.' to start the game, follow onscreen instructions
 
 
 ################################################################################

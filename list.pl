@@ -3,7 +3,6 @@
  *
  */
 
-
 /*
  * IMPORTANT NOTE: Player and Suspect are two seperate entities. Player
  * 		represents the players of the game while suspects are the cards
@@ -18,52 +17,37 @@ player(scarlet).
 player(white).
 player(envelope). %TODO: rewrite in proper nextPlayering for gameboard
 
+/*
+ * The next player after the current
+ * nextPlayer(current, next).
+ */
 nextPlayer(white, green).
 nextPlayer(green, plum).
 nextPlayer(plum, mustard).
 nextPlayer(mustard, peacock).
 nextPlayer(peacock, scarlet).
 nextPlayer(scarlet, white).
-%specially assert envelope does not have a card
+% specially assert envelope does not have a card
 
 /*
-nextPlayer(Begin, End) :-
-	nextPlayer(B, Begin),
-	(B = 6 -> E is 1; E is B + 1),
-	nextPlayer(E, End).
-
-playerSpan(Begin, End, X) :-
-	nextPlayer(B, Begin),
-	nextPlayer(E, End),
-	X is E - B,
-	X \= 1 ->
-		playerSpan(, End
-*/
-me(mustard).
-
-%you have to be a player to have a hand
-:- dynamic(hand/3).
-/*hand(Player, Status, Card) :-
-	player(Player),
-	card(_, Card).
-	FIXME: I removed this to fix observe function... Make sure this does not
-		effect anything else!
-*/
-% card(Type, Description)
+ * All Cards in the Game Of Clue
+ * card(Type, Description)
+ */
+% suspects
 card(suspect, green).
 card(suspect, plum).
 card(suspect, mustard).
 card(suspect, peacock).
 card(suspect, scarlet).
 card(suspect, white).
-
+% weapons
 card(weapon, candlestick).
 card(weapon, knife).
 card(weapon, pipe).
 card(weapon, revolver).
 card(weapon, rope).
 card(weapon, wrench).
-
+% rooms
 card(room, conservatory).
 card(room, lounge).
 card(room, kitchen).
@@ -73,9 +57,3 @@ card(room, study).
 card(room, ballcard).
 card(room, dining).
 card(room, billiard).
-
-/*
- * Questions
- * question(Asker, Card1, Card2, Card3, Responder).
- */
-:- dynamic(question/5).
