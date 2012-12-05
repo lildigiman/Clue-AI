@@ -24,3 +24,9 @@ me(mustard). % Mustard is the default AI player
  */
 :- dynamic(inRoom/1).
 inRoom(none). % No room by default
+
+/*
+ * Room that the AI cannot guess in again until they move to another room
+ */
+:- dynamic(roomNoGuess/1).
+roomNoGuess(none). % Can make a guess in any room to start

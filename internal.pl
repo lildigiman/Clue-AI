@@ -28,6 +28,15 @@ numPlayersBetween(Begining, End, X, Count) :-
 		numPlayersBetween(Y, End, X, Count + 1)).
 
 /*
+ * Extension of ai_suspects. This is where the AI grabs what it wants to find
+ * more information on
+ */
+suspect(Type, CardOut) :-
+	card(Type, CardOut),
+	\+ hand(CardOut, has, _),
+	\+ hand(CardOut, hasnot, _).
+
+/*
  * forall rule which is not predefined in GNU prolog
  */
 forall(Condition, Action) :-

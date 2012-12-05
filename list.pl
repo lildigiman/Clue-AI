@@ -54,6 +54,6 @@ card(room, kitchen).
 card(room, library).
 card(room, hall).
 card(room, study).
-card(room, ballcard).
+card(room, ballroom).
 card(room, dining).
 card(room, billiard).

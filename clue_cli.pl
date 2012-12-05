@@ -24,6 +24,15 @@ init :-
 	retract(me(mustard)),
 	asserta(me(WHOAMI)),
 	write('Got it. I\'m '), write(WHOAMI), nl.
+	write('My first Card?'), nl,
+	read(X),
+	write('My second Card?'), nl,
+	read(Y),
+	write('My third Card?'), nl,
+	read(Z),
+	setHand(WHOAMI, has, X),
+	setHand(WHOAMI, has, Y),
+	setHand(WHOAMI, has, Z).
 
 /*
  * One whole round for a player
@@ -34,16 +43,21 @@ nextTurn :-
 	me(Me),
 	((Asker == Me)
 		->	myTurn
-		; othersTurn(Asker)
+		;	othersTurn(Asker)
 	),
 	nextTurn.
 
 /*
  * What happens during AIs turn
+ *
+ * TODO: Add a check to see if AI is confident enough to make an Accusation
+ *		 and then act on them.
  */
 myTurn :-
+	go_to(WantRoom),
+	roomNoGuess(RoomNoGuess),
 	inRoom(Room),
-	(Room \== none
+	((WantRoom == Room, Room \== RoomNoGuess)
 		->	(% Find the best suspect and weapon to ask for based on what room AI is in
 			ai_suspects(Suspect, Weapon, Room),
 			write('I suspect '), write(Suspect),
@@ -54,7 +68,8 @@ myTurn :-
 			(Responder == none
 				->	write('Oh okay, no one responded')
 				;	write('With what?'), read(CardShown), see(Responder, Card1, Card2, Card3, CardShown)
-			))
+			)),
+			roomNoGuess(Room). % Can no longer make a suggestion once we've made one
 		;	write('I am so sad that I cannot do anything.')
 	).
 

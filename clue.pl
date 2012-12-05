@@ -104,16 +104,9 @@ go_to(Room) :-
 
 /*
  * What the AI should ask after the AI enters a room
+ * This is an important part of the AI that is essentially the BRAIN!
  */
 ai_suspects(Suspect, Weapon, Room) :-
 	suspect(Suspect, suspect),
 	suspect(Weapon, weapon).
 
-/*
- * This is an attempt to grab a player or card (or both?) to ask questions
- */
-suspect(Suspect, Type) :-
-	card(Type, Item),
-	card(suspect, Suspect),
-	\+ hand(Suspect, has, Item),
-	\+ hand(Suspect, hasnot, Item).
