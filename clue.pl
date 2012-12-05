@@ -25,7 +25,8 @@ observe(Asker, Card1, Card2, Card3, Responder) :-
 	storeQuestion(Asker, Card1, Card2, Card3, Responder),
 	((Responder == none)
 		-> noResponse(Asker, Card1, Card2, Card3)
-		; responseTo(Asker, Card1, Card2, Card3, Responder)).
+		; responseTo(Asker, Card1, Card2, Card3, Responder)
+	).
 
 /*
  * When someone responds to another player question
@@ -104,7 +105,7 @@ go_to(Room) :-
 /*
  * What the AI should ask after the AI enters a room
  */
-ai_suspects(Suspect, Weapon) :-
+ai_suspects(Suspect, Weapon, Room) :-
 	suspect(Suspect, suspect),
 	suspect(Weapon, weapon).
 

@@ -18,3 +18,9 @@ me(mustard). % Mustard is the default AI player
  * Player Hand is stored here
  */
 :- dynamic(hand/3).
+
+/*
+ * The room the AI is in
+ */
+:- dynamic(inRoom/1).
+inRoom(none). % No room by default

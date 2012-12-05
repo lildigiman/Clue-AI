@@ -34,22 +34,29 @@ nextTurn :-
 	me(Me),
 	((Asker == Me)
 		->	myTurn
-		; othersTurn(Asker)),
+		; othersTurn(Asker)
+	),
 	nextTurn.
 
 /*
  * What happens during AIs turn
  */
 myTurn :-
-	ai_suspects(Suspect, Weapon, Room).
-	write('I suspect '), write(Suspect),
-	write(' did it with the '), write(Weapon),
-	write(' in the '), write(Room), nl,
-	write('Who responded?'), nl,
-	read(Responder), % Insert 'none' if no one responds
-	(Responder == none
-		->	write('Oh okay, no one responded')
-		;	write('With what?'), read(CardShown), see(Responder, Card1, Card2, Card3, CardShown)).
+	inRoom(Room),
+	(Room \== none
+		->	(% Find the best suspect and weapon to ask for based on what room AI is in
+			ai_suspects(Suspect, Weapon, Room),
+			write('I suspect '), write(Suspect),
+			write(' did it with the '), write(Weapon),
+			write(' in the '), write(Room), nl,
+			write('Who responded? If no one responds, please write \'none.\''), nl,
+			read(Responder), % Insert 'none' if no one responds
+			(Responder == none
+				->	write('Oh okay, no one responded')
+				;	write('With what?'), read(CardShown), see(Responder, Card1, Card2, Card3, CardShown)
+			))
+		;	write('I am so sad that I cannot do anything.')
+	).
 
 /*
  * What happens during other players turn
@@ -65,5 +72,6 @@ othersTurn(Asker) :-
 	read(Responder),
 	(Responder == none
 		->	write('No one responded.')
-		;	observe(Asker, Card1, Card2, Card3, Responder)),
+		;	observe(Asker, Card1, Card2, Card3, Responder)
+	),
 	nextTurn.
