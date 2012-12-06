@@ -23,6 +23,7 @@
  */
 observe(Asker, Card1, Card2, Card3, Responder) :-
 	storeQuestion(Asker, Card1, Card2, Card3, Responder),
+	eliminateExcess(Responder, Card1, Card2, Card3),
 	((Responder == none)
 		-> noResponse(Asker, Card1, Card2, Card3)
 		; responseTo(Asker, Card1, Card2, Card3, Responder)

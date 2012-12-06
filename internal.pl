@@ -30,11 +30,38 @@ numPlayersBetween(Begining, End, X, Count) :-
 /*
  * Extension of ai_suspects. This is where the AI grabs what it wants to find
  * more information on
+ * This is an important part of the AI that is essentially the BRAIN!
  */
 suspect(Type, CardOut) :-
 	card(Type, CardOut),
 	\+ hand(CardOut, has, _),
 	\+ hand(CardOut, hasnot, _).
+
+/*
+ * Elliminate any repeat cards in questions where possible
+ *
+ * Mrs.White suggests :
+ *
+ * Mustard with Knife in the Kitchen.
+ * 	and Mrs. Peacock says she has no card.
+ * But previously, Miss Scarlet suggested
+ * 	Mustard with the rope in the kitchen.
+ */
+eliminateExcess(Asker, Card1, Card2, Card3, Responder) :-
+	question(_, Card1, Y, Z, Responder),
+	(Y \== Card2, Z \== Card3)
+		->	setHand(Responder, has, Card1)
+		;	write('No Knowledge gained from '), write(Card1), nl
+	),
+	question(_, _, Card2, _, Responder),
+	(X \== Card1, Z \== Card3)
+		->	setHand(Responder, has, Card2)
+		;	write('No Knowledge gained from '), write(Card2), nl
+	question(_, _, _, Card3, Responder),
+	(X \== Card1, Y \== Card2)
+		->	setHand(Responder, has, Card3)
+		;	write('No Knowledge gained from '), write(Card3), nl
+	).
 
 /*
  * forall rule which is not predefined in GNU prolog

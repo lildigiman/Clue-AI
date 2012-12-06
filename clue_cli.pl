@@ -23,7 +23,7 @@ init :-
 	read(WHOAMI),
 	retract(me(mustard)),
 	asserta(me(WHOAMI)),
-	write('Got it. I\'m '), write(WHOAMI), nl.
+	write('Got it. I\'m '), write(WHOAMI), nl,
 	write('My first Card?'), nl,
 	read(X),
 	write('My second Card?'), nl,
@@ -69,7 +69,7 @@ myTurn :-
 				->	write('Oh okay, no one responded')
 				;	write('With what?'), read(CardShown), see(Responder, Card1, Card2, Card3, CardShown)
 			)),
-			roomNoGuess(Room). % Can no longer make a suggestion once we've made one
+			roomNoGuess(Room) % Can no longer make a suggestion once we've made one
 		;	write('I am so sad that I cannot do anything.')
 	).
 
