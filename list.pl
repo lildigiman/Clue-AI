@@ -4,7 +4,7 @@
  */
 
 /*
- * IMPORTANT NOTE: Player and Suspect are two seperate entities. Player
+ * IMPORTANT NOTE: Player and Suspect are two separate entities. Player
  * 		represents the players of the game while suspects are the cards
  *
  * Players(name)

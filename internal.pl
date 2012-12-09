@@ -8,17 +8,19 @@
  */
 setHand(Player, Status, Card) :-
 	me(Me),
-	((Player == Me, Player == envelope)
-		->	write('I tried to set my own hand or Envelope'), write(Player), nl
-		;	(write(Player), write('\t'), write(Status), write('\t'), write(Card), nl,
+	((Player == Me)
+		->	write('I tried to set my own hand'), write(Player), nl
+		;	write(Player), write('\t'), write(Status), write('\t'), write(Card), nl,
 			((hand(Player, X, Y), Y == Card)
 				->	retract(hand(Player, _, Card)), asserta(hand(Player, Status, Card))
-				;	asserta(hand(Player, Status, Card)))
+				;	asserta(hand(Player, Status, Card))
 			)
 	).
 
 setMyHand(Card1, Card2, Card3) :-
 	me(Me),
+	forall(player(X),
+		(setHand(X, hasnot, Card1), setHand(X, hasnot, Card2), setHand(X, hasnot, Card3))),
 	forall(card(Type, CardOut), asserta(hand(Me, hasnot, CardOut))),
 	asserta(hand(Me, has, Card1)),
 	asserta(hand(Me, has, Card2)),
@@ -29,7 +31,7 @@ setMyHand(Card1, Card2, Card3) :-
  * TODO: If no one responds, then what?
  */
 storeQuestion(Asker, Card1, Card2, Card3, Refuter) :-
-	write(Asker), write(' suspects '), write(Card1), write(' '), write(Card2), write(' '), write(Card3), nl, write(Refuter), write(' respond'), nl,
+	write(Asker), write(' suspects '), write(Card1), write(' '), write(Card2), write(' '), write(Card3), nl, write(Refuter), write(' responded'), nl,
 	asserta(question(Asker, Card1, Card2, Card3, Refuter)).
 
 /*
@@ -48,8 +50,7 @@ numPlayersBetween(Begining, End, X, Count) :-
  */
 suspect(Type, CardOut) :-
 	card(Type, CardOut),
-	\+ hand(CardOut, has, _),
-	\+ hand(CardOut, hasnot, _).
+	hand(_, maybe, CardOut).
 
 /*
  * Elliminate any repeat cards in questions where possible
@@ -67,6 +68,7 @@ suspect(Type, CardOut) :-
 % Green, Plum, Revolver, Hall, Mustard
 % Green, Green, Revolver, Hall, Plum 
 eliminateExcess(Card1, Card2, Card3) :-
+	write('Here'),
 	me(Me),	
 	(player(X),
 	X \== envelope, X \== Me,
@@ -97,12 +99,15 @@ eliminateExcess(Card1, Card2, Card3) :-
 			forall(Players, setHand(Players, hasnot, HotCard)),
 			setHand(Z, has, HotCard)
 		;	write('No Question fits'), nl
-	),
-	(allHaveNot(Card1) -> asserta(hand(envelope, has, Card1)),	
-	(allHaveNot(Card2) -> asserta(hand(envelope, has, Card2)),	
-	(allHaveNot(Card3) -> asserta(hand(envelope, has, Card3)).
+	).
+	/*,
+	(allHaveNot(Card1) -> asserta(hand(envelope, has, Card1))),	
+	(allHaveNot(Card2) -> asserta(hand(envelope, has, Card2))),	
+	(allHaveNot(Card3) -> asserta(hand(envelope, has, Card3))). */
 
-
+/*
+ * Returns true when all players don't have a card
+ */
 allHaveNot(Card) :-
 	hand(green, hasnot, Card),
 	hand(plum, hasnot, Card),
