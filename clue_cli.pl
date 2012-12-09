@@ -55,12 +55,17 @@ nextTurn :-
  *		 and then act on them.
  */
 myTurn :-
+	/*
+	TODO: PUT ME BACK!!! I tell you what room I'm in!	
 	go_to(WantRoom),
 	roomNoGuess(RoomNoGuess),
 	inRoom(Room),
-	((WantRoom == Room, Room \== RoomNoGuess)
+	((WantRoom == Room, Room \== RoomNoGuess)*/
+	write('What room am I in?'), nl,
+	read(Room),
+	(1 is 1
 		->	(% Find the best suspect and weapon to ask for based on what room AI is in
-			ai_suspects(Suspect, Weapon, Room),
+			ai_suspects(Suspect, Weapon),
 			write('I suspect '), write(Suspect),
 			write(' did it with the '), write(Weapon),
 			write(' in the '), write(Room), nl,
@@ -68,9 +73,9 @@ myTurn :-
 			read(Refuter), % Insert 'none' if no one responds
 			(Refuter == none
 				->	write('Oh okay, no one responded')
-				;	write('With what?'), read(CardShown), see(Refuter, Card1, Card2, Card3, CardShown)
-			)),
-			roomNoGuess(Room) % Can no longer make a suggestion once we've made one
+				;	write('With what?'), nl, read(CardShown), see(Refuter, Suspect, Weapon, Room, CardShown)
+			)) %,
+			% roomNoGuess(Room) % Can no longer make a suggestion once we've made one
 		;	write('I am so sad that I cannot do anything.'), nl
 	).
 

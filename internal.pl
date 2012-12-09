@@ -7,14 +7,15 @@
  * Set a card in the hand of a player
  */
 setHand(Player, Status, Card) :-
-	write('Enter sethand'),
 	me(Me),
-	(Player == Me
-		->	write('I tried to set my own hand')
+	((Player == Me, Player == envelope)
+		->	write('I tried to set my own hand or Envelope'), write(Player), nl
 		;	(write(Player), write('\t'), write(Status), write('\t'), write(Card), nl,
-			asserta(hand(Player, Status, Card)))
-	),
-	write('Exit setHand').
+			((hand(Player, X, Y), Y == Card)
+				->	retract(hand(Player, _, Card)), asserta(hand(Player, Status, Card))
+				;	asserta(hand(Player, Status, Card)))
+			)
+	).
 
 setMyHand(Card1, Card2, Card3) :-
 	me(Me),
@@ -66,38 +67,49 @@ suspect(Type, CardOut) :-
 % Green, Plum, Revolver, Hall, Mustard
 % Green, Green, Revolver, Hall, Plum 
 eliminateExcess(Card1, Card2, Card3) :-
-	write('Enter elliminateExcess'), nl,
+	me(Me),	
 	(player(X),
-	X \== envelope,
+	X \== envelope, X \== Me,
 	hand(X, hasnot, Card1),
 	hand(X, hasnot, Card2),
 	question(_, Card1, Card2, HotCard, X)
-		->	player(Players),
+		->	player(Players), Players \== Me, Players \== envelope,
 			forall(Players, setHand(Players, hasnot, HotCard)),
 			setHand(X, has, HotCard)
-		;	write('No Question fits')
+		;	write('No Question fits'), nl
 	),
 	(player(Y),
-	Y \== envelope,
+	Y \== envelope, Y \== Me,
 	hand(Y, hasnot, Card1),
 	hand(Y, hasnot, Card3),
 	question(_, Card1, HotCard, Card3, Y)
-		->	player(Players),
+		->	player(Players), Players \== Me, Players \== envelope,
 			forall(Players, setHand(Players, hasnot, HotCard)),
 			setHand(Y, has, HotCard)
-		;	write('No Question fits')
+		;	write('No Question fits'), nl
 	),
 	(player(Z),
-	Z \== envelope,
+	Z \== envelope, Z \== Me,
 	hand(Z, hasnot, Card2),
 	hand(Z, hasnot, Card3),
 	question(_, HotCard, Card2, Card3, Z)
-		->	player(Players),
+		->	player(Players), Players \== Me, Players \== envelope,
 			forall(Players, setHand(Players, hasnot, HotCard)),
 			setHand(Z, has, HotCard)
-		;	write('No Question fits')
+		;	write('No Question fits'), nl
 	),
-	write('Exit elliminateExcess'), nl.
+	(allHaveNot(Card1) -> asserta(hand(envelope, has, Card1)),	
+	(allHaveNot(Card2) -> asserta(hand(envelope, has, Card2)),	
+	(allHaveNot(Card3) -> asserta(hand(envelope, has, Card3)).
+
+
+allHaveNot(Card) :-
+	hand(green, hasnot, Card),
+	hand(plum, hasnot, Card),
+	hand(mustard, hasnot, Card),
+	hand(peacock, hasnot, Card),
+	hand(scarlet, hasnot, Card),
+	hand(white, hasnot, Card).
 
 /*
  * forall rule which is not predefined in GNU prolog

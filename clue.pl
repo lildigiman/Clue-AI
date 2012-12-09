@@ -71,7 +71,7 @@ see(Refuter, Card1, Card2, Card3, CardShown) :-
 	me(Me),
 	forall(playersBetween(Me, Refuter, X), 	
 		(setHand(X, hasnot, Card1), setHand(X, hasnot, Card2), setHand(X, hasnot, Card3))),
-	forall(player(X), asserta(hand(X, hasnot, CardShown))),
+	forall((player(X), X \== Me), setHand(X, hasnot, CardShown)),
 	setHand(Refuter, has, CardShown).
 
 /*
@@ -107,7 +107,7 @@ go_to(Room) :-
  * What the AI should ask after the AI enters a room
  * This is an important part of the AI that is essentially the BRAIN!
  */
-ai_suspects(Suspect, Weapon, Room) :-
+ai_suspects(Suspect, Weapon) :-
 	suspect(suspect, Suspect),
 	suspect(weapon, Weapon).
 
