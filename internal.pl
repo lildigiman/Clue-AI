@@ -14,9 +14,9 @@ setHand(Player, Status, Card) :-
  * Store each question in full
  * TODO: If no one responds, then what?
  */
-storeQuestion(Asker, Card1, Card2, Card3, Responder) :-
-	write(Asker), write(' suspects '), write(Card1), write(Card2), write(Card3), nl, write(Responder), write(' respond'), nl.
-	asserta(question(Asker, Card1, Card2, Card3, Responder)).
+storeQuestion(Asker, Card1, Card2, Card3, Refuter) :-
+	write(Asker), write(' suspects '), write(Card1), write(Card2), write(Card3), nl, write(Refuter), write(' respond'), nl.
+	asserta(question(Asker, Card1, Card2, Card3, Refuter)).
 
 /*
  * Helper which returns the number of players between Begin player and End player
@@ -47,19 +47,20 @@ suspect(Type, CardOut) :-
  * But previously, Miss Scarlet suggested
  * 	Mustard with the rope in the kitchen.
  */
-eliminateExcess(Asker, Card1, Card2, Card3, Responder) :-
-	question(_, Card1, Y, Z, Responder),
-	(Y \== Card2, Z \== Card3)
-		->	setHand(Responder, has, Card1)
+eliminateExcess(Asker, Card1, Card2, Card3, Refuter) :-
+	question(_, Card1, Y, Z, Refuter),
+	((Y \== Card2, Z \== Card3)
+		->	setHand(Refuter, has, Card1)
 		;	write('No Knowledge gained from '), write(Card1), nl
 	),
-	question(_, _, Card2, _, Responder),
-	(X \== Card1, Z \== Card3)
-		->	setHand(Responder, has, Card2)
+	question(_, X, Card2, Z, Refuter),
+	((X \== Card1, Z \== Card3)
+		->	setHand(Refuter, has, Card2)
 		;	write('No Knowledge gained from '), write(Card2), nl
-	question(_, _, _, Card3, Responder),
-	(X \== Card1, Y \== Card2)
-		->	setHand(Responder, has, Card3)
+	),
+	question(_, X, Y, Card3, Refuter),
+	((X \== Card1, Y \== Card2)
+		->	setHand(Refuter, has, Card3)
 		;	write('No Knowledge gained from '), write(Card3), nl
 	).
 

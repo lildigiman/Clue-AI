@@ -14,40 +14,40 @@
  */
 
 /*
- * Responder responds to Asker with a card
+ * Refuter refutes Asker's suggestion
  * Always abide by the following structure:
  * Card1:	suspect
  * Card2:	weapon
  * Card3:	room
  * ^ Maybe just make the names of the vars suspect, weapon, room?
  */
-observe(Asker, Card1, Card2, Card3, Responder) :-
-	storeQuestion(Asker, Card1, Card2, Card3, Responder),
-	eliminateExcess(Responder, Card1, Card2, Card3),
-	((Responder == none)
-		-> noResponse(Asker, Card1, Card2, Card3)
-		; responseTo(Asker, Card1, Card2, Card3, Responder)
+observe(Asker, Card1, Card2, Card3, Refuter) :-
+	storeQuestion(Asker, Card1, Card2, Card3, Refuter),
+	eliminateExcess(Refuter, Card1, Card2, Card3),
+	((Refuter == none)
+		->	noResponse(Asker, Card1, Card2, Card3)
+		;	responseTo(Asker, Card1, Card2, Card3, Refuter)
 	).
 
 /*
  * When someone responds to another player question
  */
-responseTo(Asker, Card1, Card2, Card3, Responder) :-
-	forall(playersBetween(Asker, Responder, X), 	
+responseTo(Asker, Card1, Card2, Card3, Refuter) :-
+	forall(playersBetween(Asker, Refuter, X), 	
 		(setHand(X, hasnot, Card1), setHand(X, hasnot, Card2), setHand(X, hasnot, Card3))),
-	%The Responder possibly has one of the three cards:
+	%The Refuter possibly has one of the three cards:
 	%On the other hand, if ANY player has the card, we know he does not
-	((hand(Responder, has, Card1) ; hand(Responder, hasnot, Card1))
-		-> write('Responder has card') %TODO: Make this a null operator after debug
-		; setHand(Responder, maybe, Card1)
+	((hand(Refuter, has, Card1) ; hand(Refuter, hasnot, Card1))
+		-> write('Refuter already has card') %TODO: Make this a null operator after debug
+		; setHand(Refuter, maybe, Card1)
 	),
-	((hand(Responder, has, Card2) ; hand(Responder, hasnot, Card2))
-		-> write('Responder has card') %TODO: Make this a null operator after debug
-		; setHand(Responder, maybe, Card2)
+	((hand(Refuter, has, Card2) ; hand(Refuter, hasnot, Card2))
+		-> write('Refuter already has card') %TODO: Make this a null operator after debug
+		; setHand(Refuter, maybe, Card2)
 	),
-	((hand(Responder, has, Card3) ; hand(Responder, hasnot, Card3))
-		-> write('Responder has card') %TODO: Make this a null operator after debug
-		; setHand(Responder, maybe, Card3)
+	((hand(Refuter, has, Card3) ; hand(Refuter, hasnot, Card3))
+		-> write('Refuter already has card') %TODO: Make this a null operator after debug
+		; setHand(Refuter, maybe, Card3)
 	).
 
 /*
@@ -65,14 +65,14 @@ infer(Player, Card) :-
 	asserta(Player, maybe, Card).
 
 /*
- * When Responder responds to the AI with a CardShown
+ * When Refuter responds to the AI with a CardShown
  */
-see(Responder, Card1, Card2, Card3, CardShown) :-
+see(Refuter, Card1, Card2, Card3, CardShown) :-
 	me(Me),
-	forall(playersBetween(Me, Responder, X), 	
+	forall(playersBetween(Me, Refuter, X), 	
 		(setHand(X, hasnot, Card1), setHand(X, hasnot, Card2), setHand(X, hasnot, Card3))),
 	forall(player(X), asserta(hand(X, hasnot, CardShown))),
-	setHand(Responder, has, CardShown).
+	setHand(Refuter, has, CardShown).
 
 /*
  * See if Player is between the Begin player and End Player

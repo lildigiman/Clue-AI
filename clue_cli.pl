@@ -64,10 +64,10 @@ myTurn :-
 			write(' did it with the '), write(Weapon),
 			write(' in the '), write(Room), nl,
 			write('Who responded? If no one responds, please write \'none.\''), nl,
-			read(Responder), % Insert 'none' if no one responds
-			(Responder == none
+			read(Refuter), % Insert 'none' if no one responds
+			(Refuter == none
 				->	write('Oh okay, no one responded')
-				;	write('With what?'), read(CardShown), see(Responder, Card1, Card2, Card3, CardShown)
+				;	write('With what?'), read(CardShown), see(Refuter, Card1, Card2, Card3, CardShown)
 			)),
 			roomNoGuess(Room) % Can no longer make a suggestion once we've made one
 		;	write('I am so sad that I cannot do anything.')
@@ -75,6 +75,7 @@ myTurn :-
 
 /*
  * What happens during other players turn
+ * TODO: insert function to what AI does if he has card
  */
 othersTurn(Asker) :-
 	write(Asker), write(' suspects who?'), nl,
@@ -84,9 +85,9 @@ othersTurn(Asker) :-
 	write('In what Room?'), nl,
 	read(Card3),
 	write('Who responded?'), nl,
-	read(Responder),
-	(Responder == none
+	read(Refuter),
+	(Refuter == none
 		->	write('No one responded.')
-		;	observe(Asker, Card1, Card2, Card3, Responder)
+		;	observe(Asker, Card1, Card2, Card3, Refuter)
 	),
 	nextTurn.
