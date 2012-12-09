@@ -30,9 +30,7 @@ init :-
 	read(Y),
 	write('My third Card?'), nl,
 	read(Z),
-	setHand(WHOAMI, has, X),
-	setHand(WHOAMI, has, Y),
-	setHand(WHOAMI, has, Z).
+	setMyHand(X, Y, Z).
 
 /*
  * One whole round for a player
@@ -41,9 +39,12 @@ nextTurn :-
 	write('Who\'s Turn?'), nl,
 	read(Asker),
 	me(Me),
-	((Asker == Me)
-		->	myTurn
-		;	othersTurn(Asker)
+	((Asker == listing)
+		->	printout
+		;	((Asker == Me)
+				->	myTurn
+				;	othersTurn(Asker)
+			)
 	),
 	nextTurn.
 
@@ -70,7 +71,7 @@ myTurn :-
 				;	write('With what?'), read(CardShown), see(Refuter, Card1, Card2, Card3, CardShown)
 			)),
 			roomNoGuess(Room) % Can no longer make a suggestion once we've made one
-		;	write('I am so sad that I cannot do anything.')
+		;	write('I am so sad that I cannot do anything.'), nl
 	).
 
 /*

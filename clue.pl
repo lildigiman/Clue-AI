@@ -23,7 +23,7 @@
  */
 observe(Asker, Card1, Card2, Card3, Refuter) :-
 	storeQuestion(Asker, Card1, Card2, Card3, Refuter),
-	eliminateExcess(Refuter, Card1, Card2, Card3),
+	eliminateExcess(Card1, Card2, Card3),
 	((Refuter == none)
 		->	noResponse(Asker, Card1, Card2, Card3)
 		;	responseTo(Asker, Card1, Card2, Card3, Refuter)
@@ -33,7 +33,7 @@ observe(Asker, Card1, Card2, Card3, Refuter) :-
  * When someone responds to another player question
  */
 responseTo(Asker, Card1, Card2, Card3, Refuter) :-
-	forall(playersBetween(Asker, Refuter, X), 	
+	forall(playersBetween(Asker, Refuter, X),
 		(setHand(X, hasnot, Card1), setHand(X, hasnot, Card2), setHand(X, hasnot, Card3))),
 	%The Refuter possibly has one of the three cards:
 	%On the other hand, if ANY player has the card, we know he does not
@@ -101,13 +101,13 @@ numPlayersBetween(Begin, End, NumBetween) :-
  * The optimal room the AI would like to go to
  */
 go_to(Room) :-
-	suspect(Room, room).
+	suspect(room, Room).
 
 /*
  * What the AI should ask after the AI enters a room
  * This is an important part of the AI that is essentially the BRAIN!
  */
 ai_suspects(Suspect, Weapon, Room) :-
-	suspect(Suspect, suspect),
-	suspect(Weapon, weapon).
+	suspect(suspect, Suspect),
+	suspect(weapon, Weapon).
 

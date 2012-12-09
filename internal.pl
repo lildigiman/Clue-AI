@@ -7,15 +7,28 @@
  * Set a card in the hand of a player
  */
 setHand(Player, Status, Card) :-
-	write(Player), write('\t'), write(Status), write('\t'), write(Card), nl,
-	asserta(hand(Player, Status, Card)).
+	write('Enter sethand'),
+	me(Me),
+	(Player == Me
+		->	write('I tried to set my own hand')
+		;	(write(Player), write('\t'), write(Status), write('\t'), write(Card), nl,
+			asserta(hand(Player, Status, Card)))
+	),
+	write('Exit setHand').
+
+setMyHand(Card1, Card2, Card3) :-
+	me(Me),
+	forall(card(Type, CardOut), asserta(hand(Me, hasnot, CardOut))),
+	asserta(hand(Me, has, Card1)),
+	asserta(hand(Me, has, Card2)),
+	asserta(hand(Me, has, Card3)).
 
 /*
  * Store each question in full
  * TODO: If no one responds, then what?
  */
 storeQuestion(Asker, Card1, Card2, Card3, Refuter) :-
-	write(Asker), write(' suspects '), write(Card1), write(Card2), write(Card3), nl, write(Refuter), write(' respond'), nl.
+	write(Asker), write(' suspects '), write(Card1), write(' '), write(Card2), write(' '), write(Card3), nl, write(Refuter), write(' respond'), nl,
 	asserta(question(Asker, Card1, Card2, Card3, Refuter)).
 
 /*
@@ -46,26 +59,62 @@ suspect(Type, CardOut) :-
  * 	and Mrs. Peacock says she has no card.
  * But previously, Miss Scarlet suggested
  * 	Mustard with the rope in the kitchen.
+ *	So Mrs. Peacock must have the rope.
+ * TODO: create discover function to reduce repeat code
  */
-eliminateExcess(Asker, Card1, Card2, Card3, Refuter) :-
-	question(_, Card1, Y, Z, Refuter),
-	((Y \== Card2, Z \== Card3)
-		->	setHand(Refuter, has, Card1)
-		;	write('No Knowledge gained from '), write(Card1), nl
+
+% Green, Plum, Revolver, Hall, Mustard
+% Green, Green, Revolver, Hall, Plum 
+eliminateExcess(Card1, Card2, Card3) :-
+	write('Enter elliminateExcess'), nl,
+	(player(X),
+	X \== envelope,
+	hand(X, hasnot, Card1),
+	hand(X, hasnot, Card2),
+	question(_, Card1, Card2, HotCard, X)
+		->	player(Players),
+			forall(Players, setHand(Players, hasnot, HotCard)),
+			setHand(X, has, HotCard)
+		;	write('No Question fits')
 	),
-	question(_, X, Card2, Z, Refuter),
-	((X \== Card1, Z \== Card3)
-		->	setHand(Refuter, has, Card2)
-		;	write('No Knowledge gained from '), write(Card2), nl
+	(player(Y),
+	Y \== envelope,
+	hand(Y, hasnot, Card1),
+	hand(Y, hasnot, Card3),
+	question(_, Card1, HotCard, Card3, Y)
+		->	player(Players),
+			forall(Players, setHand(Players, hasnot, HotCard)),
+			setHand(Y, has, HotCard)
+		;	write('No Question fits')
 	),
-	question(_, X, Y, Card3, Refuter),
-	((X \== Card1, Y \== Card2)
-		->	setHand(Refuter, has, Card3)
-		;	write('No Knowledge gained from '), write(Card3), nl
-	).
+	(player(Z),
+	Z \== envelope,
+	hand(Z, hasnot, Card2),
+	hand(Z, hasnot, Card3),
+	question(_, HotCard, Card2, Card3, Z)
+		->	player(Players),
+			forall(Players, setHand(Players, hasnot, HotCard)),
+			setHand(Z, has, HotCard)
+		;	write('No Question fits')
+	),
+	write('Exit elliminateExcess'), nl.
 
 /*
  * forall rule which is not predefined in GNU prolog
  */
 forall(Condition, Action) :-
 	\+ (call(Condition), \+ call(Action)).
+
+/*
+ * Union
+ */
+union([A|B], C, D) :- member(A,C), !, union(B,C,D).
+union([A|B], C, [A|D]) :- union(B,C,D).
+union([],Z,Z).
+
+
+/*
+ * Printout
+ */
+printout :-
+	forall(player(X), forall(hand(X, Y, Z), (write(X), write(' '), write(Y), write(' '), write(Z), nl))).
