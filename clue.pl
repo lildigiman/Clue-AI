@@ -23,11 +23,11 @@
  */
 observe(Asker, Card1, Card2, Card3, Refuter) :-
 	storeQuestion(Asker, Card1, Card2, Card3, Refuter),
-	eliminateExcess(Card1, Card2, Card3),
 	((Refuter == none)
 		->	noResponse(Asker, Card1, Card2, Card3)
 		;	responseTo(Asker, Card1, Card2, Card3, Refuter)
-	).
+	),
+	eliminateExcess(Card1, Card2, Card3).
 
 /*
  * When someone responds to another player question
@@ -38,15 +38,15 @@ responseTo(Asker, Card1, Card2, Card3, Refuter) :-
 	%The Refuter possibly has one of the three cards:
 	%On the other hand, if ANY player has the card, we know he does not
 	((hand(Refuter, has, Card1) ; hand(Refuter, hasnot, Card1))
-		-> write('Refuter already has card') %TODO: Make this a null operator after debug
+		-> write('Refuter already has or hasnot card'), nl %TODO: Make this a null operator after debug
 		; setHand(Refuter, maybe, Card1)
 	),
 	((hand(Refuter, has, Card2) ; hand(Refuter, hasnot, Card2))
-		-> write('Refuter already has card') %TODO: Make this a null operator after debug
+		-> write('Refuter already has or hasnot card'), nl %TODO: Make this a null operator after debug
 		; setHand(Refuter, maybe, Card2)
 	),
 	((hand(Refuter, has, Card3) ; hand(Refuter, hasnot, Card3))
-		-> write('Refuter already has card') %TODO: Make this a null operator after debug
+		-> write('Refuter already has or hasnot card'), nl %TODO: Make this a null operator after debug
 		; setHand(Refuter, maybe, Card3)
 	).
 
@@ -54,8 +54,9 @@ responseTo(Asker, Card1, Card2, Card3, Refuter) :-
  * When no one responds
  */
 noResponse(Asker, Card1, Card2, Card3) :-
+	write('No one responded!!!'), nl,
 	%Everyone but the Asker may have the card
-	forall((player(X), X \== Asker),
+	forall((player(X), X \== Asker, X \== envelope),
 		(setHand(X, hasnot, Card1), setHand(X, hasnot, Card2), setHand(X, hasnot, Card3))).
 	
 /*
@@ -106,6 +107,7 @@ go_to(Room) :-
 /*
  * What the AI should ask after the AI enters a room
  * This is an important part of the AI that is essentially the BRAIN!
+ * TODO: Isolate "maybes" with two more hasnots that are farthest away from us
  */
 ai_suspects(Suspect, Weapon) :-
 	suspect(suspect, Suspect),

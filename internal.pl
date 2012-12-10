@@ -12,7 +12,8 @@ setHand(Player, Status, Card) :-
 		->	write('I tried to set my own hand'), write(Player), nl
 		;	write(Player), write('\t'), write(Status), write('\t'), write(Card), nl,
 			((hand(Player, X, Y), Y == Card)
-				->	retract(hand(Player, _, Card)), asserta(hand(Player, Status, Card))
+				->	write('Retract: '), write(Player), write(' '), write(X), write(' '), write(Y), nl,
+					retract(hand(Player, _, Card)), asserta(hand(Player, Status, Card))
 				;	asserta(hand(Player, Status, Card))
 			)
 	).
@@ -75,8 +76,9 @@ eliminateExcess(Card1, Card2, Card3) :-
 	hand(X, hasnot, Card1),
 	hand(X, hasnot, Card2),
 	question(_, Card1, Card2, HotCard, X)
-		->	player(Players), Players \== Me, Players \== envelope,
-			forall(Players, setHand(Players, hasnot, HotCard)),
+		->	write('We did this'),
+			forall((player(Players), Players \== Me, Players \== envelope),
+				setHand(Players, hasnot, HotCard)),
 			setHand(X, has, HotCard)
 		;	write('No Question fits'), nl
 	),
@@ -85,9 +87,10 @@ eliminateExcess(Card1, Card2, Card3) :-
 	hand(Y, hasnot, Card1),
 	hand(Y, hasnot, Card3),
 	question(_, Card1, HotCard, Card3, Y)
-		->	player(Players), Players \== Me, Players \== envelope,
-			forall(Players, setHand(Players, hasnot, HotCard)),
-			setHand(Y, has, HotCard)
+		->	write('We did this'),
+			forall((player(Players), Players \== Me, Players \== envelope),
+				setHand(Players, hasnot, HotCard)),
+			setHand(X, has, HotCard)
 		;	write('No Question fits'), nl
 	),
 	(player(Z),
@@ -95,15 +98,16 @@ eliminateExcess(Card1, Card2, Card3) :-
 	hand(Z, hasnot, Card2),
 	hand(Z, hasnot, Card3),
 	question(_, HotCard, Card2, Card3, Z)
-		->	player(Players), Players \== Me, Players \== envelope,
-			forall(Players, setHand(Players, hasnot, HotCard)),
-			setHand(Z, has, HotCard)
+		->	write('We did this'),
+			forall((player(Players), Players \== Me, Players \== envelope),
+				setHand(Players, hasnot, HotCard)),
+			setHand(X, has, HotCard)
 		;	write('No Question fits'), nl
-	).
-	/*,
-	(allHaveNot(Card1) -> asserta(hand(envelope, has, Card1))),	
-	(allHaveNot(Card2) -> asserta(hand(envelope, has, Card2))),	
-	(allHaveNot(Card3) -> asserta(hand(envelope, has, Card3))). */
+	),
+
+	(allHaveNot(Card1) -> asserta(hand(envelope, has, Card1)) ; write('Poop1'), nl),	
+	(allHaveNot(Card2) -> asserta(hand(envelope, has, Card2)) ; write('Poop3'), nl),	
+	(allHaveNot(Card3) -> asserta(hand(envelope, has, Card3)) ; write('Poop2'), nl).
 
 /*
  * Returns true when all players don't have a card

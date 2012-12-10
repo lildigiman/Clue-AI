@@ -61,10 +61,11 @@ myTurn :-
 	roomNoGuess(RoomNoGuess),
 	inRoom(Room),
 	((WantRoom == Room, Room \== RoomNoGuess)*/
-	write('What room am I in?'), nl,
-	read(Room),
-	(1 is 1
-		->	(% Find the best suspect and weapon to ask for based on what room AI is in
+
+	(1 is 1 % FIXME: remove this line when done testing
+		->	write('What room am I in?'), nl,
+			read(Room),
+			% Find the best suspect and weapon to ask for based on what room AI is in
 			ai_suspects(Suspect, Weapon),
 			write('I suspect '), write(Suspect),
 			write(' did it with the '), write(Weapon),
@@ -72,9 +73,9 @@ myTurn :-
 			write('Who responded? If no one responds, please write \'none.\''), nl,
 			read(Refuter), % Insert 'none' if no one responds
 			(Refuter == none
-				->	write('Oh okay, no one responded')
+				->	write('Oh okay, no one responded'), nl %TODO: Make this an observation still!
 				;	write('With what?'), nl, read(CardShown), see(Refuter, Suspect, Weapon, Room, CardShown)
-			)) %,
+			) %,
 			% roomNoGuess(Room) % Can no longer make a suggestion once we've made one
 		;	write('I am so sad that I cannot do anything.'), nl
 	).
@@ -92,8 +93,5 @@ othersTurn(Asker) :-
 	read(Card3),
 	write('Who responded?'), nl,
 	read(Refuter),
-	(Refuter == none
-		->	write('No one responded.')
-		;	observe(Asker, Card1, Card2, Card3, Refuter)
-	),
+	observe(Asker, Card1, Card2, Card3, Refuter),
 	nextTurn.

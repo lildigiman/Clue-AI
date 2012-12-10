@@ -14,6 +14,10 @@ How To use:
 
 	Type 'run.' to start the game, follow onscreen instructions
 
+	To run a scripted game, such as game.txt, use:
+
+	$ cat game.txt - | prolog
+
 
 ################################################################################
 TODO:
