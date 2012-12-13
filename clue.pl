@@ -113,3 +113,18 @@ ai_suspects(Suspect, Weapon) :-
 	suspect(suspect, Suspect),
 	suspect(weapon, Weapon).
 
+/*
+ * The accusation the AI makes after its turn if it feels confident enough
+ */
+accusation(Player, Weapon, Room) :-
+	(card(player, Player),
+	card(weapon, Weapon),
+	card(room, Room),
+	hand(envelope, has, Player),
+	hand(envelope, has, Weapon),
+	hand(envelope, has, Room)
+		->	write('Accusation: '), write(Player), write(' '), write(Weapon), write(' '), write(Room), nl
+		;	false
+	).
+
+

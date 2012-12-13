@@ -48,6 +48,8 @@ numPlayersBetween(Begining, End, X, Count) :-
  * Extension of ai_suspects. This is where the AI grabs what it wants to find
  * more information on
  * This is an important part of the AI that is essentially the BRAIN!
+ * TODO:	Find maybe cards furthest from me
+ *			this may require reworking the suspect/2 and ai_suspects/2
  */
 suspect(Type, CardOut) :-
 	card(Type, CardOut),
@@ -105,9 +107,19 @@ eliminateExcess(Card1, Card2, Card3) :-
 		;	write('No Question fits'), nl
 	),
 
-	(allHaveNot(Card1) -> asserta(hand(envelope, has, Card1)) ; write('Poop1'), nl),	
-	(allHaveNot(Card2) -> asserta(hand(envelope, has, Card2)) ; write('Poop3'), nl),	
-	(allHaveNot(Card3) -> asserta(hand(envelope, has, Card3)) ; write('Poop2'), nl).
+	/* If all players don't have a card, then the envelope has it */
+	((allHaveNot(Card1), \+ hand(envelope, has, Card1))
+		->	retract(hand(envelope, _, Card1)),
+			asserta(hand(envelope, has, Card1))
+		;	write(Card1), write(' Not Enough Evidence'), nl),	
+	((allHaveNot(Card2), \+ hand(envelope, has, Card2))
+		->	retract(hand(envelope, _, Card2)),
+			asserta(hand(envelope, has, Card2))
+		;	write(Card2), write(' Not Enough Evidence'), nl),	
+	((allHaveNot(Card3), \+ hand(envelope, has, Card3))
+		->	retract(hand(envelope, _, Card3)),
+			asserta(hand(envelope, has, Card3))
+		;	write(Card3), write(' Not Enough Evidence'), nl).
 
 /*
  * Returns true when all players don't have a card
@@ -125,14 +137,6 @@ allHaveNot(Card) :-
  */
 forall(Condition, Action) :-
 	\+ (call(Condition), \+ call(Action)).
-
-/*
- * Union
- */
-union([A|B], C, D) :- member(A,C), !, union(B,C,D).
-union([A|B], C, [A|D]) :- union(B,C,D).
-union([],Z,Z).
-
 
 /*
  * Printout
